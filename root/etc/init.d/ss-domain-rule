@@ -1,0 +1,206 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright 2015-2020 Loy B. <lonord.b@gmail.com>
+# Licensed to the public under the GNU General Public License v3.0.
+#
+
+START=99
+STOP=15
+EXTRA_COMMANDS="gfwlist"
+EXTRA_HELP="	gfwlist	Some gfwlist operations"
+
+PROG_NAME=ss-domain-rule
+PROG_PATH=/etc/init.d/$PROG_NAME
+
+SVR_DNSMASQ=/etc/init.d/dnsmasq
+SVR_SHADOWSOCKS=/etc/init.d/shadowsocks-libev
+SVR_CRON=/etc/init.d/cron
+
+DNSMASQ_CONF_DIR=/etc/dnsmasq.d
+DNSMASQ_RULE=$DNSMASQ_CONF_DIR/ss-domain-rule.conf
+
+DATA_DIR=/var/etc/ss-domain-rule
+GFWLIST_CACHE=$DATA_DIR/gfwlist_domain.txt
+GFWLIST_TIMESTAMP=$DATA_DIR/update_time.txt
+GFWLIST_FETCH_ADDR=https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt
+
+CRONTAB_FILE=/etc/crontabs/root
+
+LOG_ERR="logger -t $PROG_NAME -s"
+
+# Restart services (dnsmasq, shadowsocks-libev etc.) to validate the rules
+restart_services() {
+	$SVR_DNSMASQ reload > /dev/null
+	$SVR_SHADOWSOCKS reload > /dev/null
+	$SVR_CRON reload > /dev/null
+}
+
+apply_rules() {
+	# echo "DEBUG - apply_rules"
+	set_dnsmasq_config
+	local enable
+	config_get_bool enable $1 enable 0
+	# echo "DEBUG - enable: $enable"
+	if [ "$enable" != "1" ]; then
+		clear_rules
+		return 0
+	fi
+	
+	local forward_ipset_name
+	local bypass_ipset_name
+	local forward_domain
+	local bypass_domain
+	config_get forward_ipset_name $1 forward_ipset_name
+	config_get bypass_ipset_name $1 bypass_ipset_name
+	config_get forward_domain $1 forward_domain
+	config_get bypass_domain $1 bypass_domain
+	echo "" > $DNSMASQ_RULE
+	for i in $forward_domain
+	do
+		append_dnsmasq_rule $i $forward_ipset_name
+	done
+	for i in $bypass_domain
+	do
+		append_dnsmasq_rule $i $bypass_ipset_name
+	done
+
+	local gfwlist_enable
+	local gfwlist_auto_update
+	config_get_bool gfwlist_enable $1 gfwlist_enable 0
+	config_get_bool gfwlist_auto_update $1 gfwlist_auto_update 0
+	if [ "$gfwlist_enable" == "1" ]; then
+		enable_gfwlist $forward_ipset_name $gfwlist_auto_update
+	else
+		disable_gfwlist
+	fi
+}
+
+set_dnsmasq_config() {
+	test -d $DNSMASQ_CONF_DIR || mkdir -p $DNSMASQ_CONF_DIR
+	uci -q batch <<-EOF >/dev/null
+del_list dhcp.@dnsmasq[0].confdir=$DNSMASQ_CONF_DIR
+add_list dhcp.@dnsmasq[0].confdir=$DNSMASQ_CONF_DIR
+commit dhcp
+EOF
+}
+
+enable_gfwlist() {
+	# echo "DEBUG - enable_gfwlist"
+	test -f $GFWLIST_CACHE || download_gfwlist
+	if [ -f $GFWLIST_CACHE ]; then
+		for i in $(cat $GFWLIST_CACHE)
+		do
+			append_dnsmasq_rule $i $1
+		done
+	else
+		$LOG_ERR "download gfwlist failed"
+	fi
+	if [ "$2" == "1" ]; then
+		set_cron
+	else
+		unset_cron
+	fi
+}
+
+disable_gfwlist() {
+	# echo "DEBUG - disable_gfwlist"
+	unset_cron
+}
+
+set_cron() {
+	unset_cron
+	# echo "DEBUG - set_cron"
+	cat <<-EOF >> $CRONTAB_FILE
+# This task is added by ss-domain-rule, DO NOT MODIFY OR DELETE!
+10 4 * * * $PROG_PATH gfwlist -u
+EOF
+}
+
+unset_cron() {
+	# echo "DEBUG - unset_cron"
+	test -f $CRONTAB_FILE && cat $CRONTAB_FILE | grep -v "ss-domain-rule" > $CRONTAB_FILE
+}
+
+download_gfwlist() {
+	# echo "DEBUG - download_gfwlist start"
+	test -d $DATA_DIR || mkdir -p $DATA_DIR
+	wget -q --timeout=15 -O $GFWLIST_CACHE $GFWLIST_FETCH_ADDR 2>&1 | $LOG_ERR
+	echo "$(date)" > $GFWLIST_TIMESTAMP
+	# echo "DEBUG - download_gfwlist end"
+}
+
+append_dnsmasq_rule() {
+	echo "ipset=/$1/$2" >> $DNSMASQ_RULE
+}
+
+clear_rules() {
+	# echo "DEBUG - clear_rules"
+	test -f $DNSMASQ_RULE && rm $DNSMASQ_RULE
+	unset_cron
+}
+
+start() {
+	clear_rules
+	config_load ss-domain-rule
+	config_foreach apply_rules "general"
+	restart_services
+}
+
+stop() {
+	clear_rules
+	restart_services
+}
+
+reload() {
+	config_load ss-domain-rule
+	config_foreach apply_rules "general"
+	restart_services
+}
+
+gfwlist_help() {
+	echo "Usage: $PROG_PATH gfwlist [ -l | -u [-b] ]"
+	echo "	-l	Show last update date of gfwlist (default)"
+	echo "	-u	Update the gfwlist"
+	echo "	-b	Perform update action in background"
+}
+
+display_update_date() {
+	test -f $GFWLIST_TIMESTAMP && cat $GFWLIST_TIMESTAMP
+}
+
+do_update_list() {
+	if [ -n "$1" ]; then
+		($PROG_PATH gfwlist -u >/dev/null 2>&1)&
+		return 0
+	fi
+	download_gfwlist
+	reload
+}
+
+gfwlist() {
+	local show_last_update
+	local update_list
+	local update_in_bg
+	while getopts 'ulb' OPT; do
+		case $OPT in
+			l)
+				show_last_update=1
+			;;
+			u)
+				update_list=1
+			;;
+			b)
+				update_in_bg=1
+			;;
+			*)
+				gfwlist_help
+				exit 1
+			;;
+		esac
+	done
+	if [ -n "$update_list" ]; then
+		do_update_list $update_in_bg
+	else
+		display_update_date
+	fi
+}

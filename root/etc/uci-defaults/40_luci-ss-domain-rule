@@ -1,0 +1,8 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@ss-domain-rule[-1]
+	add ucitrack ss-domain-rule
+	set ucitrack.@ss-domain-rule[-1].init=ss-domain-rule
+	commit ucitrack
+EOF

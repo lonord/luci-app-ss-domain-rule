@@ -1,0 +1,59 @@
+msgid "Add domain in GFWList to forward domain"
+msgstr "将GFWList中的域名添加到转发的域名列表"
+
+msgid "Auto Update GFWList"
+msgstr "自动更新GFWList"
+
+msgid "Auto update GFWList every day"
+msgstr "每天自动更新GFWList"
+
+msgid "Bypass Domain"
+msgstr "要绕过的域名"
+
+msgid "Bypass IPSet Name"
+msgstr "绕过目标地址的ipset名称"
+
+msgid "Bypass ss-redir for packets with dst domain in this list"
+msgstr "对于域名在列表中的报文，绕过ss-redir"
+
+msgid "Configure domain-based redirection rules of shadowsocks."
+msgstr "此页面用于配置基于域名的shadowsocks转发规则"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Forward Domain"
+msgstr "要转发的域名"
+
+msgid "Forward IPSet Name"
+msgstr "转发目标地址的ipset名称"
+
+msgid "Forward through ss-redir for packets with dst domain in this list"
+msgstr "对于域名在列表中的报文，通过ss-redir转发"
+
+msgid "Last update"
+msgstr "上次更新"
+
+msgid "Never"
+msgstr "从不"
+
+msgid "Setname of ipset used by ss-rule to bypass packages"
+msgstr "ss-rule用于绕过目标地址的ipset名称"
+
+msgid "Setname of ipset used by ss-rule to forward packages"
+msgstr "ss-rule用于转发目标地址的ipset名称"
+
+msgid "Shadowsocks Domain-based Rules"
+msgstr "Shadowsocks域名规则"
+
+msgid "Update GFWList"
+msgstr "更新GFWList"
+
+msgid "Update Now"
+msgstr "立即更新"
+
+msgid "Update action proceeded"
+msgstr "已执行更新"
+
+msgid "Use GFWList"
+msgstr "使用GFWList"

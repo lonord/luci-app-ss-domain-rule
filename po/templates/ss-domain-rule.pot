@@ -1,0 +1,62 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Add domain in GFWList to forward domain"
+msgstr ""
+
+msgid "Auto Update GFWList"
+msgstr ""
+
+msgid "Auto update GFWList every day"
+msgstr ""
+
+msgid "Bypass Domain"
+msgstr ""
+
+msgid "Bypass IPSet Name"
+msgstr ""
+
+msgid "Bypass ss-redir for packets with dst domain in this list"
+msgstr ""
+
+msgid "Configure domain-based redirection rules of shadowsocks."
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Forward Domain"
+msgstr ""
+
+msgid "Forward IPSet Name"
+msgstr ""
+
+msgid "Forward through ss-redir for packets with dst domain in this list"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Setname of ipset used by ss-rule to bypass packages"
+msgstr ""
+
+msgid "Setname of ipset used by ss-rule to forward packages"
+msgstr ""
+
+msgid "Shadowsocks Domain-based Rules"
+msgstr ""
+
+msgid "Update GFWList"
+msgstr ""
+
+msgid "Update Now"
+msgstr ""
+
+msgid "Update action proceeded"
+msgstr ""
+
+msgid "Use GFWList"
+msgstr ""

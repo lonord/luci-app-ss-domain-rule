@@ -1,0 +1,8 @@
+config general 'general'
+	option enable '0'
+	list forward_domain 'google.com'
+	list bypass_domain 'baidu.com'
+	option forward_ipset_name 'ss_rules_dst_forward'
+	option bypass_ipset_name 'ss_rules_dst_bypass'
+	option gfwlist_enable '1'
+	option gfwlist_auto_update '1'
