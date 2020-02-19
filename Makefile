@@ -5,8 +5,8 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=ss-domain-rule
-PKG_VERSION:=1.0.0
+PKG_NAME:=luci-app-ss-domain-rule
+PKG_VERSION:=1.0.1
 PKG_RELEASE:=1
 
 PKG_LICENSE:=GPLv3
@@ -14,7 +14,7 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Loy B. <lonord.b@gmail.com>
 
 LUCI_TITLE:=LuCI support for domain-based shadowsocks rules
-LUCI_DEPENDS:=+libustream-openssl +ca-certificates +shadowsocks-libev
+LUCI_DEPENDS:=+libustream-openssl +ca-certificates +shadowsocks-libev-config +shadowsocks-libev-ss-rules +dnsmasq-full
 LUCI_PKGARCH:=all
 
 define Package/$(PKG_NAME)/conffiles

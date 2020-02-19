@@ -22,6 +22,16 @@ o = s:option(Value, "forward_ipset_name", translate("Forward IPSet Name"), trans
 
 o = s:option(Value, "bypass_ipset_name", translate("Bypass IPSet Name"), translate("Setname of ipset used by ss-rule to bypass packages"))
 
+o = s:option(Flag, "dns_forward_enable", translate("Use Alternative DNS Server"), translate("Use alternative DNS server for forwarded domain"))
+
+o = s:option(Value, "dns_forward_addr", translate("Alternative DNS Server IP"), translate("IP of alternative DNS server for forwarded domain"))
+o.datatype = "ip4addr"
+o:depends("dns_forward_enable", "1")
+
+o = s:option(Value, "dns_forward_port", translate("Alternative DNS Server Port"), translate("Port of alternative DNS server for forwarded domain"))
+o.datatype = "port"
+o:depends("dns_forward_enable", "1")
+
 o = s:option(Flag, "gfwlist_enable", translate("Use GFWList"), translate("Add domain in GFWList to forward domain"))
 
 o = s:option(Flag, "gfwlist_auto_update", translate("Auto Update GFWList"), translate("Auto update GFWList every day"))

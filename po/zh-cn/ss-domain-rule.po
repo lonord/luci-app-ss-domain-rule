@@ -1,5 +1,14 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
 msgid "Add domain in GFWList to forward domain"
 msgstr "将GFWList中的域名添加到转发的域名列表"
+
+msgid "Alternative DNS Server IP"
+msgstr "其他DNS服务器的IP"
+
+msgid "Alternative DNS Server Port"
+msgstr "其他DNS服务器的端口"
 
 msgid "Auto Update GFWList"
 msgstr "自动更新GFWList"
@@ -31,11 +40,17 @@ msgstr "转发目标地址的ipset名称"
 msgid "Forward through ss-redir for packets with dst domain in this list"
 msgstr "对于域名在列表中的报文，通过ss-redir转发"
 
+msgid "IP of alternative DNS server for forwarded domain"
+msgstr "用于解析需要转发域名的其他DNS服务器IP"
+
 msgid "Last update"
 msgstr "上次更新"
 
 msgid "Never"
 msgstr "从不"
+
+msgid "Port of alternative DNS server for forwarded domain"
+msgstr "用于解析需要转发域名的其他DNS服务器端口"
 
 msgid "Setname of ipset used by ss-rule to bypass packages"
 msgstr "ss-rule用于绕过目标地址的ipset名称"
@@ -55,5 +70,11 @@ msgstr "立即更新"
 msgid "Update action proceeded"
 msgstr "已执行更新"
 
+msgid "Use Alternative DNS Server"
+msgstr "指定其他DNS服务器"
+
 msgid "Use GFWList"
 msgstr "使用GFWList"
+
+msgid "Use alternative DNS server for forwarded domain"
+msgstr "指定其他DNS服务器用于解析需要转发的域名"

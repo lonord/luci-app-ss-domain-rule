@@ -4,6 +4,12 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 msgid "Add domain in GFWList to forward domain"
 msgstr ""
 
+msgid "Alternative DNS Server IP"
+msgstr ""
+
+msgid "Alternative DNS Server Port"
+msgstr ""
+
 msgid "Auto Update GFWList"
 msgstr ""
 
@@ -34,10 +40,16 @@ msgstr ""
 msgid "Forward through ss-redir for packets with dst domain in this list"
 msgstr ""
 
+msgid "IP of alternative DNS server for forwarded domain"
+msgstr ""
+
 msgid "Last update"
 msgstr ""
 
 msgid "Never"
+msgstr ""
+
+msgid "Port of alternative DNS server for forwarded domain"
 msgstr ""
 
 msgid "Setname of ipset used by ss-rule to bypass packages"
@@ -58,5 +70,11 @@ msgstr ""
 msgid "Update action proceeded"
 msgstr ""
 
+msgid "Use Alternative DNS Server"
+msgstr ""
+
 msgid "Use GFWList"
+msgstr ""
+
+msgid "Use alternative DNS server for forwarded domain"
 msgstr ""

@@ -29,10 +29,10 @@ CRONTAB_FILE=/etc/crontabs/root
 LOG_ERR="logger -t $PROG_NAME -s"
 
 # Restart services (dnsmasq, shadowsocks-libev etc.) to validate the rules
-restart_services() {
-	$SVR_DNSMASQ reload > /dev/null
-	$SVR_SHADOWSOCKS reload > /dev/null
-	$SVR_CRON reload > /dev/null
+svr_restart() {
+	$SVR_DNSMASQ restart > /dev/null
+	$SVR_SHADOWSOCKS restart > /dev/null
+	$SVR_CRON restart > /dev/null
 }
 
 apply_rules() {
@@ -50,18 +50,28 @@ apply_rules() {
 	local bypass_ipset_name
 	local forward_domain
 	local bypass_domain
+	local dns_forward_enable
+	local dns_forward_addr
+	local dns_forward_port
 	config_get forward_ipset_name $1 forward_ipset_name
 	config_get bypass_ipset_name $1 bypass_ipset_name
 	config_get forward_domain $1 forward_domain
 	config_get bypass_domain $1 bypass_domain
+	config_get_bool dns_forward_enable $1 dns_forward_enable 0
+	local alternative_dns
+	if [ "$dns_forward_enable" == "1" ]; then
+		config_get dns_forward_addr $1 dns_forward_addr
+		config_get dns_forward_port $1 dns_forward_port
+		alternative_dns="$dns_forward_addr#$dns_forward_port"
+	fi
 	echo "" > $DNSMASQ_RULE
 	for i in $forward_domain
 	do
-		append_dnsmasq_rule $i $forward_ipset_name
+		append_dnsmasq_rule $i $forward_ipset_name $alternative_dns
 	done
 	for i in $bypass_domain
 	do
-		append_dnsmasq_rule $i $bypass_ipset_name
+		append_dnsmasq_rule $i $bypass_ipset_name $alternative_dns
 	done
 
 	local gfwlist_enable
@@ -69,7 +79,7 @@ apply_rules() {
 	config_get_bool gfwlist_enable $1 gfwlist_enable 0
 	config_get_bool gfwlist_auto_update $1 gfwlist_auto_update 0
 	if [ "$gfwlist_enable" == "1" ]; then
-		enable_gfwlist $forward_ipset_name $gfwlist_auto_update
+		enable_gfwlist $forward_ipset_name $gfwlist_auto_update $alternative_dns
 	else
 		disable_gfwlist
 	fi
@@ -90,7 +100,7 @@ enable_gfwlist() {
 	if [ -f $GFWLIST_CACHE ]; then
 		for i in $(cat $GFWLIST_CACHE)
 		do
-			append_dnsmasq_rule $i $1
+			append_dnsmasq_rule $i $1 $3
 		done
 	else
 		$LOG_ERR "download gfwlist failed"
@@ -130,6 +140,9 @@ download_gfwlist() {
 }
 
 append_dnsmasq_rule() {
+	if [ -n "$3" ]; then
+		echo "server=/$1/$3" >> $DNSMASQ_RULE
+	fi
 	echo "ipset=/$1/$2" >> $DNSMASQ_RULE
 }
 
@@ -143,18 +156,18 @@ start() {
 	clear_rules
 	config_load ss-domain-rule
 	config_foreach apply_rules "general"
-	restart_services
+	svr_restart
 }
 
 stop() {
 	clear_rules
-	restart_services
+	svr_restart
 }
 
 reload() {
 	config_load ss-domain-rule
 	config_foreach apply_rules "general"
-	restart_services
+	svr_restart
 }
 
 gfwlist_help() {
