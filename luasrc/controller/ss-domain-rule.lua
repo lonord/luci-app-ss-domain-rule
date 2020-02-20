@@ -8,6 +8,6 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "ss-domain-rule"}, cbi("ss-domain-rule/settings"), _("Shadowsocks Domain-based Rules"))
+	entry({"admin", "services", "ss-domain-rule"}, cbi("ss-domain-rule/settings"), _("Shadowsocks Domain-based Rules")).dependent=false
 
 end

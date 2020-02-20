@@ -59,7 +59,7 @@ msgid "Setname of ipset used by ss-rule to forward packages"
 msgstr "ss-rule用于转发目标地址的ipset名称"
 
 msgid "Shadowsocks Domain-based Rules"
-msgstr "Shadowsocks域名规则"
+msgstr "Shadowsocks 域名规则"
 
 msgid "Update GFWList"
 msgstr "更新GFWList"

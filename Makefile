@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ss-domain-rule
-PKG_VERSION:=1.0.1
+PKG_VERSION:=1.0.2
 PKG_RELEASE:=1
 
 PKG_LICENSE:=GPLv3
@@ -31,6 +31,16 @@ fi
 
 chmod 755 "$${IPKG_INSTROOT}/etc/init.d/ss-domain-rule" >/dev/null 2>&1
 $${IPKG_INSTROOT}/etc/init.d/ss-domain-rule enable >/dev/null 2>&1
+$${IPKG_INSTROOT}/etc/init.d/ucitrack reload >/dev/null 2>&1
+exit 0
+endef
+
+define Package/$(PKG_NAME)/prerm
+#!/bin/sh
+if [ -x $${IPKG_INSTROOT}/etc/init.d/ss-domain-rule ]; then
+	$${IPKG_INSTROOT}/etc/init.d/ss-domain-rule stop
+	$${IPKG_INSTROOT}/etc/init.d/ss-domain-rule disable
+fi
 exit 0
 endef
 
