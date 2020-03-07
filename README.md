@@ -1,4 +1,7 @@
 # luci-app-ss-domain-rule
+
+[![build](https://img.shields.io/travis/lonord/luci-app-ss-domain-rule.svg?style=flat-square)](https://travis-ci.org/lonord/luci-app-ss-domain-rule)
+
 运行于OpenWrt/LEDE上的Shadowsocks域名规则，支持gfwlist
 
 ## 安装
