@@ -1,5 +1,5 @@
 dist: trusty
-sudo: false
+os: linux
 notifications:
   email: false
 language: c
@@ -13,25 +13,13 @@ cache:
 git:
   depth: 3
   submodules: false
-addons:
-  apt:
-    packages:
-      - subversion
-      - build-essential
-      - libncurses5-dev
-      - zlib1g-dev
-      - gettext
-      - libssl-dev
-      - xsltproc
-      - zip
 env:
   global:
     - PACKAGE=luci-app-ss-domain-rule
-    - GITHUB_USER=lonord
-    - GITHUB_REPO=luci-app-ss-domain-rule
     - DOWNLOAD_DIR=${HOME}/files
-    - SDK_PATH=https://downloads.openwrt.org/releases/18.06.4/targets/x86/64
-    - SDK=-sdk-18.06.4-x86-64_
+    - SDK_PATH=https://downloads.openwrt.org/releases/18.06.8/targets/x86/64
+    - SDK=-sdk-18.06.8-x86-64_
+    - CONFIG_CCACHE=y
 install:
   - mkdir -p "$HOME/files" && cd "$HOME/files"
   - wget "$SDK_PATH/sha256sums" -O sha256sums
@@ -69,7 +57,7 @@ script:
   - "./scripts/feeds update -a >/dev/null"
   - "./scripts/feeds install -a >/dev/null"
   - make defconfig
-  - make package/$PACKAGE/{clean,compile}
+  - make package/$PACKAGE/{clean,compile} V=sc
   - find "$SDK_HOME/bin/"
   - find "$SDK_HOME/bin/" -name luci-*-ss-domain-rule*.ipk -exec cp {} "$TRAVIS_BUILD_DIR"
     \;
@@ -78,8 +66,8 @@ deploy:
   provider: releases
   file_glob: true
   file: "$TRAVIS_BUILD_DIR/*.ipk"
-  skip_cleanup: true
+  cleanup: false
+  edge: true
+  token: $GITHUB_TOKEN
   on:
     tags: true
-  api_key:
-    secure: AGcREbuejBoTg3wsPnQwosQgF1SDcuIx7UVE/j5O6Gahl4pNrYPSmDnCbvAVZfhJma1Jiy7dwXnVnM4FO8GpAgHZqs/J/+9ELxCB66Nf2wUlhkK2R1NUY4P23DR8ysICL8S8EatSNaWlhJwmyJEaPuAnXb9vB/IGIpdCmAkuKkPKnRLOHqKbyTshxP5jgMtDEtEYVU/kvi5DSB7meWSnccghKwLxwwGcDWWsOmNBBnIRVqKM09bvPur8pbQ4fc03/14lll2jo/ruu6Ae9NIrUAMGk2CEnbS4PiaLhe+55hplOFz4hmCEI9tiVkwj6Z5BlwE38ZDq7AsG2mqCvNPmwrJ6Vo0SnFKMyONDeQSAUVdm+QFXrBGhUUV3rioHpGI6fEr03lx60Wd1Go6ivcmjNVHVvU2Vn/LDGYuXLLxghE/6bi/d9WkRNi8GQAjtYngthyfyMVVnZQBpCN/4f5gu5KYdMd2lgBvFLFX/Td0yfWCmXJGQv3h9hxaQifmCCSXat8MDOuIyJgsiumRC7YJaqM9nwj2F4BZ+jlZXE61LyInU6kh4/KUvquIhQZr40HBAA6XWxL7nSVd9uUFSX455UhClAbLPef+shLOBkUQZLOEvNph8wqYaXyMGCrkDq3/v/UMDbj/cFJrIQSYKXMlq6momm2Clv1GG2mq7FCoy9Ro=
