@@ -19,7 +19,7 @@ SVR_CRON=/etc/init.d/cron
 DNSMASQ_CONF_DIR=/etc/dnsmasq.d
 DNSMASQ_RULE=$DNSMASQ_CONF_DIR/ss-domain-rule.conf
 
-DATA_DIR=/var/etc/ss-domain-rule
+DATA_DIR=/etc/ss-domain-rule
 GFWLIST_CACHE=$DATA_DIR/gfwlist_domain.txt
 GFWLIST_TIMESTAMP=$DATA_DIR/update_time.txt
 GFWLIST_FETCH_ADDR=https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt
@@ -30,9 +30,9 @@ LOG_ERR="logger -t $PROG_NAME -s"
 
 # Restart services (dnsmasq, shadowsocks-libev etc.) to validate the rules
 svr_restart() {
-	$SVR_DNSMASQ restart > /dev/null
-	$SVR_SHADOWSOCKS restart > /dev/null
-	$SVR_CRON restart > /dev/null
+	$SVR_DNSMASQ restart > /dev/null 2>&1
+	$SVR_SHADOWSOCKS restart > /dev/null 2>&1
+	$SVR_CRON restart > /dev/null 2>&1
 }
 
 apply_rules() {
