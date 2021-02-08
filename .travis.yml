@@ -57,7 +57,7 @@ script:
   - "./scripts/feeds update -a >/dev/null"
   - "./scripts/feeds install -a >/dev/null"
   - make defconfig
-  - make package/$PACKAGE/{clean,compile} V=s
+  - make package/$PACKAGE/{clean,compile}
   - find "$SDK_HOME/bin/"
   - find "$SDK_HOME/bin/" -name luci-*-ss-domain-rule*.ipk -exec cp {} "$TRAVIS_BUILD_DIR"
     \;
