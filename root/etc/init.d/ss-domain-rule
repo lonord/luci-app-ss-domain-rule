@@ -21,6 +21,7 @@ DNSMASQ_RULE=$DNSMASQ_CONF_DIR/ss-domain-rule.conf
 
 DATA_DIR=/etc/ss-domain-rule
 GFWLIST_CACHE=$DATA_DIR/gfwlist_domain.txt
+GFWLIST_CACHE_TMP=/tmp/gfwlist_domain.txt.tmp
 GFWLIST_TIMESTAMP=$DATA_DIR/update_time.txt
 GFWLIST_FETCH_ADDR=https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt
 
@@ -138,8 +139,13 @@ unset_cron() {
 download_gfwlist() {
 	# echo "DEBUG - download_gfwlist start"
 	test -d $DATA_DIR || mkdir -p $DATA_DIR
-	wget -q --timeout=15 -O $GFWLIST_CACHE $GFWLIST_FETCH_ADDR 2>&1 | $LOG_ERR
-	echo "$(date)" > $GFWLIST_TIMESTAMP
+	wget -q --timeout=15 -O $GFWLIST_CACHE_TMP $GFWLIST_FETCH_ADDR 2>&1 | $LOG_ERR
+	if [ $? -eq 0 -a -n "$(head $GFWLIST_CACHE_TMP)" ]; then
+		mv $GFWLIST_CACHE_TMP $GFWLIST_CACHE
+		echo "$(date)" > $GFWLIST_TIMESTAMP
+	else
+		echo "gfwlist update failed"
+	fi
 	# echo "DEBUG - download_gfwlist end"
 }
 
